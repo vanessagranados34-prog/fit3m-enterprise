@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIT3M ENTERPRISE - Demo Privada</title>
+
+    <style>
+        /* ======== INTEGRACIÓN FIT3M x FITNESS PARK ======== */
+        /* Paleta: Negro (#0D0D0D), Grafito (#1A1A1A), Verde FIT3M (#16A34A), Amarillo Acento (#FFCC00) */
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #0D0D0D;
+            /* Fondo oscuro Fitness Park */
+            color: #e5e7eb;
+            /* Texto gris muy claro / blanco para legibilidad */
+        }
+
+        header {
+            background-color: #000000;
+            border-bottom: 2px solid #FFCC00;
+            /* Acento amarillo Fitness Park */
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            font-family: 'Arial Black', Impact, sans-serif;
+            /* Tipografía más dura/agresiva */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        header span {
+            color: #16A34A;
+            /* Verde FIT3M destacando en el header */
+        }
+
+        .section {
+            display: none;
+            padding: 20px;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .card {
+            background-color: #1A1A1A;
+            /* Tarjeta Grafito Oscuro */
+            padding: 20px;
+            margin: 15px auto;
+            max-width: 900px;
+            border-radius: 8px;
+            /* Bordes menos redondos, más serios */
+            border: 1px solid #333333;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            /* Sombra más fuerte hacia el negro absoluto */
+        }
+
+        .card h2,
+        .card h3 {
+            color: #ffffff;
+            font-family: 'Arial Black', Impact, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button {
+            background-color: #16A34A;
+            /* Verde Plano Intenso FIT3M */
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            /* Menos redondeo */
+            cursor: pointer;
+            margin: 5px 0;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        button:hover {
+            background-color: #15803d;
+            /* Verde ligeramente más oscuro al hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4);
+            /* Resplandor verde tecnológico */
+        }
+
+        input,
+        select,
+        textarea {
+            background-color: #262626;
+            /* Inputs oscuros */
+            color: #ffffff;
+            padding: 10px;
+            margin: 8px 0;
+            width: calc(100% - 20px);
+            /* Ajuste padding box o usar box-sizing */
+            box-sizing: border-box;
+            border: 1px solid #404040;
+            border-radius: 6px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #16A34A;
+            /* Foco en verde FIT3M */
+        }
+
+        nav {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        nav button {
+            background-color: #333333;
+            /* Botones secundarios oscuros */
+            color: #ffffff;
+        }
+
+        nav button:hover {
+            background-color: #404040;
+            box-shadow: none;
+        }
+
+        .badge-active {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .badge-off {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        /* Rojo más brillante en tema oscuro */
+        .metric-large {
+            font-size: 28px;
+            font-weight: bold;
+            color: #16a34a;
+        }
+
+        .mobile {
+            max-width: 420px;
+            margin: auto;
+            border-radius: 16px;
+            padding: 20px;
+            background-color: #1A1A1A;
+            border: 1px solid #333;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .mobile h2 {
+            color: #ffffff;
+            font-family: 'Arial Black', Impact, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .day {
+            padding: 12px 6px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .day.active {
+            background-color: #262626;
+            /* Día disponible normal oscuro */
+            color: #e5e7eb;
+            border: 1px solid #404040;
+        }
+
+        .day.inactive {
+            background-color: #111111;
+            /* Día pasado o inerte muy oscuro */
+            color: #444444;
+        }
+
+        .day.selected {
+            background-color: #0D0D0D;
+            color: #ffffff;
+            border: 2px solid #16A34A;
+            /* El contorno verde FIT3M destaca mucho */
+            box-shadow: 0 0 10px rgba(22, 163, 74, 0.3);
+        }
+
+        .day.active:hover {
+            border-color: #16A34A;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .card-box {
+            background-color: #262626;
+            /* Cajas de secciones grises */
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #333;
+            transition: all 0.2s ease;
+            color: #ffffff;
+        }
+
+        .card-box:hover {
+            transform: translateY(-3px);
+            border-color: #16A34A;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+        }
+
+        /* Customizadores para apartados extra */
+        .step-box {
+            background-color: #262626;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #16A34A;
+            /* Línea decorativa verde */
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #333;
+            margin: 20px 0;
+        }
+
+        ul {
+            background: #262626;
+            padding: 20px 40px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        li {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        /* ======= OVERRIDE TDEE ZERO BLUE (ULTRA ESPECIFICIDAD) ======= */
+        body div#tdee-calculator {
+            background-color: #1A1A1A !important;
+            color: #e5e7eb !important;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        body div#tdee-calculator .button,
+        body div#tdee-calculator button {
+            background-color: #16A34A !important;
+            border: none !important;
+            color: white !important;
+            font-weight: bold !important;
+            padding: 12px 20px !important;
+            border-radius: 6px !important;
+        }
+
+        body div#tdee-calculator .toggle-btn {
+            background-color: #262626 !important;
+            color: white !important;
+        }
+
+        body div#tdee-calculator .toggle-btn.active,
+        body div#tdee-calculator .toggle-btn[aria-pressed="true"] {
+            background-color: #16A34A !important;
+            border-color: #16A34A !important;
+        }
+
+        body div#tdee-calculator h1,
+        body div#tdee-calculator h2,
+        body div#tdee-calculator label,
+        body div#tdee-calculator .calc-main-heading,
+        body div#tdee-calculator .field-label,
+        body div#tdee-calculator .hb-font-heading-2 {
+            color: #000000 !important;
+            font-weight: 900 !important;
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+        }
+
+        body div#tdee-calculator .bmr-calculator,
+        body div#tdee-calculator .form-section {
+            background: transparent !important;
+        }
+
+        body div#tdee-calculator label,
+        body div#tdee-calculator .field-label {
+            color: #16A34A !important;
+            font-weight: bold !important;
+        }
+
+        body div#tdee-calculator input,
+        body div#tdee-calculator select {
+            background-color: #262626 !important;
+            color: #ffffff !important;
+            border: 1px solid #404040 !important;
+        }
+
+        /* RESULTADOS (FONDO NEGRO, TEXTO VERDE) MACHACAR AZUL Y BLANCO */
+        body div#tdee-calculator .results-container,
+        body div#tdee-calculator .result-box,
+        body div#tdee-calculator [class*="result-box"] {
+            background-color: #000000 !important;
+            border: 2px solid #16A34A !important;
+            border-radius: 8px !important;
+            color: #e5e7eb !important;
+            padding: 20px !important;
+        }
+
+        body div#tdee-calculator .bmr-value,
+        body div#tdee-calculator .multiplier-value,
+        body div#tdee-calculator strong,
+        body div#tdee-calculator h3 {
+            color: #16A34A !important;
+            font-size: 1.4em !important;
+        }
+
+        body div#tdee-calculator .activity-header {
+            color: #FFCC00 !important;
+        }
+
+        body div#tdee-calculator a {
+            color: #FFCC00 !important;
+        }
+
+        /* LIMPIEZA DE RESULTADOS: ELIMINAR ZAVA */
+        body div#tdee-calculator .zava-cta,
+        body div#tdee-calculator .zava-process,
+        body div#tdee-calculator .zava-process-step,
+        body div#tdee-calculator .zava-step-content,
+        body div#tdee-calculator .bullet-list {
+            display: none !important;
+        }
+
+        /* Estilos Macros PRO */
+        .macro-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .macro-item {
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #16A34A;
+        }
+
+        .macro-val {
+            font-size: 1.5em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .macro-label {
+            font-size: 0.7em;
+            color: #16A34A;
+            text-transform: uppercase;
+        }
+
+        /* Clínica PRO */
+        .highlight-yellow {
+            color: #FFCC00;
+        }
+
+        .highlight-green {
+            color: #16A34A;
+        }
+
+        .result-box-clinica {
+            background: #000;
+            border: 1px solid #FFCC00;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header><span>FIT3M</span> ENTERPRISE</header>
+
+    <div id="privateLogin" class="section active">
+        <div class="card">
+            <h2 style="text-align: center; margin-bottom: 25px;"><span style="color:#16A34A;">FIT3M</span> Access</h2>
+            <input type="email" id="privateEmail" placeholder="Correo corporativo">
+            <input type="password" id="privatePass" placeholder="Contraseña">
+            <button onclick="privateAccess()" style="width: 100%; margin-top: 15px; padding: 12px;">Entrar a la
+                Plataforma</button>
+            <p id="privateMsg" style="color:#ef4444; text-align: center; margin-top:15px;"></p>
+        </div>
+    </div>
+
+    <div id="roleLogin" class="section">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin:0;">Selección de Perfil Demo</h2>
+                <div style="display: flex; gap: 5px;">
+                    <button onclick="showCalculator('tdeeSection')"
+                        style="background:transparent; border:1px solid #16A34A; color:#16A34A; font-size: 0.7em; padding: 5px 10px;">📊
+                        TDEE</button>
+                    <button onclick="showCalculator('macroSection')"
+                        style="background:transparent; border:1px solid #16A34A; color:#16A34A; font-size: 0.7em; padding: 5px 10px;">🥩
+                        MACROS</button>
+                    <button onclick="showCalculator('mifflinSection')"
+                        style="background:transparent; border:1px solid #FFCC00; color:#FFCC00; font-size: 0.7em; padding: 5px 10px;">🩺
+                        CLÍNICA</button>
+                </div>
+            </div>
+            <input type="email" id="roleEmail" placeholder="Correo">
+            <input type="password" id="rolePass" placeholder="Contraseña">
+            <button onclick="loginRole()" style="width: 100%; margin-top: 15px;">Iniciar Sesión Demo</button>
+            <p id="roleMsg" style="color:#ef4444;"></p>
+            <div style="background:#262626; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                <p style="font-size:12px;color:#a3a3a3; margin:0; line-height: 1.6;">
+                    <strong>Credenciales de Prueba:</strong><br>
+                    admin@fit3m.example / ADMIN-2026<br>
+                    owner@nuevaera.example / OWNER-2026<br>
+                    trainer@nuevaera.example / TRAINER-2026<br>
+                    cliente1@example.com / CLIENTE-2026<br>
+                    cliente2@example.com / CLIENTE-2026
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="app" class="section">
+        <nav style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:20px;">
+            <button onclick="backToRoles()" style="background:#333;">Cambiar Rol</button>
+            <div id="adminTools" style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button onclick="showCalculator('tdeeSection')"
+                    style="background:transparent; border:1px solid #16A34A; color:#16A34A;">📊 TDEE</button>
+                <button onclick="showCalculator('macroSection')"
+                    style="background:transparent; border:1px solid #16A34A; color:#16A34A;">🥩 MACROS</button>
+                <button onclick="showCalculator('mifflinSection')"
+                    style="background:transparent; border:1px solid #FFCC00; color:#FFCC00;">🩺 CLÍNICA</button>
+            </div>
+            <button style="background-color:#dc2626; color:white; border:none;" onclick="logoutTotal()">🔒 Cerrar
+                Sesión</button>
+        </nav>
+        <div id="content"></div>
+    </div>
+
+    <!-- CALCULADORA MACROS PRO -->
+    <div id="macroSection" class="section">
+        <nav><button onclick="backToRoles()">← Volver</button></nav>
+        <div class="card">
+            <h2 style="color: #16A34A;">Macros PRO <span style="font-size: 0.5em; color: white;">FIT3M ALGORITHM</span>
+            </h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <label>Peso (kg/lb)</label>
+                    <div style="display:flex;"><input type="number" id="maWt" value="70"><select id="maUnit"
+                            style="width:70px; margin-left:5px;">
+                            <option value="kg">kg</option>
+                            <option value="lb">lb</option>
+                        </select></div>
+                </div>
+                <div><label>Altura (cm)</label><input type="number" id="maHt" value="175"></div>
+            </div>
+            <label>Objetivo</label>
+            <select id="maGoal">
+                <option value="lose">Perder Grasa</option>
+                <option value="maintain">Mantenimiento</option>
+                <option value="gain">Ganar Músculo</option>
+            </select>
+            <button onclick="calculateMacrosPRO()" style="width:100%; margin-top:15px;">Calcular Distribución</button>
+            <div id="maResult" style="display:none; margin-top:20px;">
+                <div class="macro-grid">
+                    <div class="macro-item"><span class="macro-label">Kcal</span><span class="macro-val"
+                            id="resKcal">---</span></div>
+                    <div class="macro-item"><span class="macro-label">Proteína</span><span
+                            class="macro-val highlight-green" id="resP">---</span><span class="macro-label">gr</span>
+                    </div>
+                    <div class="macro-item"><span class="macro-label">Carbos</span><span
+                            class="macro-val highlight-green" id="resC">---</span><span class="macro-label">gr</span>
+                    </div>
+                    <div class="macro-item" style="grid-column: span 3; border-color:#FFCC00;"><span
+                            class="macro-label highlight-yellow">Grasas</span><span class="macro-val highlight-yellow"
+                            id="resF">---</span><span class="macro-label">gr</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TDEE SECTION (ZAVA FIX) -->
+    <div id="tdeeSection" class="section">
+        <nav><button onclick="backToRoles()">← Volver</button></nav>
+        <div class="card">
+            <h2 style="color: #16A34A;">Gasto Energético (TDEE) <span style="font-size:0.5em; color:white;">CALCULADORA
+                    UNIFICADA</span></h2>
+            <div id="tdee-calculator">Cargando motor de cálculo...</div>
+            <script src="https://fractl.zavamed.com/zes/tdee-calculator.js?v=2"></script>
+        </div>
+    </div>
+
+    <!-- MIFFLIN CLÍNICA PRO -->
+    <div id="mifflinSection" class="section">
+        <nav><button onclick="backToRoles()">← Volver</button></nav>
+        <div class="card">
+            <h2 style="color: #FFCC00;">Mifflin-St.Jeor Clínica Avanzada</h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <input type="number" id="clWt" placeholder="Peso kg" value="70">
+                <input type="number" id="clHt" placeholder="Altura cm" value="175">
+            </div>
+            <label>Factor de Estrés Clínico</label>
+            <select id="clStress">
+                <option value="1.0">Paciente Estable (1.0)</option>
+                <option value="1.2">Cirugía Menor (1.2)</option>
+                <option value="1.5">Sepsis / Quemados (1.5)</option>
+            </select>
+            <button onclick="calculateClinica()"
+                style="width:100%; background:transparent; border:1px solid #FFCC00; color:#FFCC00; margin-top:10px;">Diagnosticar
+                GEB Clínico</button>
+            <div id="clRes" class="result-box-clinica" style="display:none;">
+                <p>Gasto Energético Basal: <span id="clVal" class="highlight-yellow"
+                        style="font-size:1.5em; font-weight:bold;"></span> kcal/día</p>
+                <p style="font-size:0.8em; color:#a3a3a3;">Resultado validado por la ecuación de Mifflin-St.Jeor para
+                    entornos hospitalarios.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const PRIVATE_EMAIL = "barbaragracrei@gmail.com";
+        const PRIVATE_PASS = "VANE-2026";
+
+        const users = {
+            "admin@fit3m.example": { pass: "ADMIN-2026", role: "admin" },
+            "owner@nuevaera.example": { pass: "OWNER-2026", role: "owner" },
+            "trainer@nuevaera.example": { pass: "TRAINER-2026", role: "trainer" },
+            "cliente1@example.com": { pass: "CLIENTE-2026", role: "client1" },
+            "cliente2@example.com": { pass: "CLIENTE-2026", role: "client2" }
+        };
+
+        let employees = [
+            { name: "Juan Pérez", email: "trainer@nuevaera.example", pass: "TRAINER-2026", role: "Entrenador", active: true }
+        ];
+
+        let clients = {
+            client1: { plan: null, exclude: "", macroInfo: "" },
+            client2: { plan: null, exclude: "", macroInfo: "" }
+        };
+        let currentTrainerClient = "client1";
+
+        function privateAccess() {
+            let email = document.getElementById("privateEmail").value;
+            let pass = document.getElementById("privatePass").value;
+            if (email === PRIVATE_EMAIL && pass === PRIVATE_PASS) {
+                document.getElementById("privateLogin").classList.remove("active");
+                document.getElementById("roleLogin").classList.add("active");
+            } else {
+                document.getElementById("privateMsg").innerText = "Acceso denegado. Credenciales incorrectas.";
+            }
+        }
+
+        function loginRole() {
+            let e = document.getElementById("roleEmail").value;
+            let p = document.getElementById("rolePass").value;
+            if (users[e] && users[e].pass === p) {
+                document.getElementById("roleLogin").classList.remove("active");
+                document.getElementById("app").classList.add("active");
+                render(users[e].role);
+            } else {
+                document.getElementById("roleMsg").innerText = "Credenciales incorrectas";
+            }
+        }
+
+        function backToRoles() {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById("roleLogin").classList.add("active");
+        }
+
+        function showCalculator(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function logoutTotal() { location.reload(); }
+
+        function render(role) {
+            let adminTools = document.getElementById("adminTools");
+            if (adminTools) {
+                if (role.startsWith("client")) {
+                    adminTools.style.display = "none";
+                } else {
+                    adminTools.style.display = "flex";
+                }
+            }
+            if (role === "admin") renderAdmin();
+            if (role === "owner") renderOwner();
+            if (role === "trainer") renderTrainer();
+            if (role === "client1") renderClient("client1");
+            if (role === "client2") renderClient("client2");
+        }
+
+        function renderAdmin() {
+            document.getElementById("content").innerHTML = `      
+<div class="card">      
+<h2>Panel Maestro FIT3M</h2>      
+Control total del sistema y logs (Modo Dios).      
+</div>`;
+        }
+
+        function renderOwner() {
+
+            let netoPorCliente = 19.25;
+
+            let mensual10 = (10 * netoPorCliente).toFixed(2);
+            let anual10 = (mensual10 * 12).toFixed(2);
+
+            let mensual20 = (20 * netoPorCliente).toFixed(2);
+            let anual20 = (mensual20 * 12).toFixed(2);
+
+            let mensual30 = (30 * netoPorCliente).toFixed(2);
+            let anual30 = (mensual30 * 12).toFixed(2);
+
+            let list = employees.map((e, i) => `      
+<div style="background:#262626; padding:15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">      
+<div>  
+<strong style="font-size:1.1em; color:white;">${e.name}</strong> <span style="color:#a3a3a3;">(${e.role})</span><br>       
+${e.active ? '<span class="badge-active">● Activo</span>' : '<span class="badge-off">● Desactivado</span>'}      
+</div>  
+<button onclick="toggleEmployee(${i})" style="background:#404040;">Cambiar Estado</button>      
+</div>`).join("");
+
+            document.getElementById("content").innerHTML = `      
+<div class="card">      
+<h2>Dashboard Propietario</h2>      
+      
+<div style="background:#262626; padding: 20px; border-radius: 8px; border-left: 4px solid #FFCC00; margin-bottom: 20px;">  
+    <h3 style="margin-top:0;">Potencial de Ingresos <span style="font-size:0.6em; color:#FFCC00; font-family:Arial;">PROYECCIÓN</span></h3>      
+    <p style="color:#a3a3a3;">Estimación basada en cuota Premium de 35€ / mes / socio (Neto calculado: 19.25€):</p>      
+      
+    <div style="margin-top:15px;">  
+        <span style="display:inline-block; width: 120px; color:#a3a3a3;">10 clientes:</span> <span class="metric-large">${mensual10}€</span> <span style="color:#666;">/ mes</span> → <span style="color:white; font-weight:bold;">${anual10}€ / año</span><br>      
+    </div>  
+    <div style="margin-top:10px;">  
+        <span style="display:inline-block; width: 120px; color:#a3a3a3;">20 clientes:</span> <span class="metric-large">${mensual20}€</span> <span style="color:#666;">/ mes</span> → <span style="color:white; font-weight:bold;">${anual20}€ / año</span><br>      
+    </div>  
+    <div style="margin-top:10px;">  
+        <span style="display:inline-block; width: 120px; color:#a3a3a3;">30 clientes:</span> <span class="metric-large">${mensual30}€</span> <span style="color:#666;">/ mes</span> → <span style="color:white; font-weight:bold;">${anual30}€ / año</span>      
+    </div>  
+</div>  
+      
+<hr>      
+      
+<h3>Añadir Nuevo Staff</h3>      
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">  
+    <input id="newName" placeholder="Nombre completo">      
+    <input id="newEmail" placeholder="Correo electrónico">      
+    <input type="password" id="newPass" placeholder="Asignar contraseña">      
+    <select id="newRole">      
+        <option>Entrenador Personal</option>      
+        <option>Nutricionista</option>      
+    </select>   
+</div>     
+<button onclick="addEmployee()" style="width:100%; margin-top:10px;">Dar de Alta Operario</button>      
+      
+<hr>      
+<h3>Plantilla Activa</h3>      
+${list}      
+</div>`;
+        }
+
+        function addEmployee() {
+            let name = document.getElementById("newName").value;
+            let email = document.getElementById("newEmail").value;
+            let pass = document.getElementById("newPass").value;
+            let role = document.getElementById("newRole").value;
+            if (name && email && pass) {
+                employees.push({ name, email, pass, role, active: true });
+                renderOwner();
+            }
+        }
+
+        function toggleEmployee(i) {
+            employees[i].active = !employees[i].active;
+            renderOwner();
+        }
+
+        function renderTrainer() {
+            let html = `      
+<div class="card">      
+<h3>Consola Entrenador <span style="color:#16A34A; font-size:0.6em;">[ MÓDULO IA ]</span></h3>      
+      
+<div style="background:#262626; padding:20px; border-radius:8px; margin-bottom:20px;">  
+    <h3 style="margin-top:0;">Dar de alta nuevo cliente</h3>      
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">  
+        <input placeholder="Nombre completo">      
+        <input placeholder="Edad (Años)">      
+        <input placeholder="Teléfono">      
+        <input placeholder="Objetivo Principal">      
+    </div>  
+    <button style="width:100%; background:#333; margin-top:10px;">Registrar Cliente</button>      
+</div>  
+      
+<hr>      
+      
+<h3>Gestor de Cliente Experist</h3>  
+<div style="display:flex; gap:10px; align-items:center;">  
+    <span style="width:80px; color:#a3a3a3;">Cliente:</span>  
+    <select id="clientSelect" onchange="changeTrainerClient(this.value)" style="flex:1;">  
+    <option value="client1" ${currentTrainerClient === "client1" ? "selected" : ""}>Cliente Demo 1</option>  
+    <option value="client2" ${currentTrainerClient === "client2" ? "selected" : ""}>Cliente Demo 2</option>  
+    </select>     
+</div>  
+      
+<div style="display:flex; gap:10px; align-items:center;">  
+    <span style="width:80px; color:#a3a3a3;">Perfil:</span>  
+    <select id="clientGoal" style="flex:1;">      
+    <option value="cut">Bajar de peso</option>      
+    <option value="shred">Pérdida de volumen</option>      
+    <option value="bulk_clean">Subida de masa corporal</option>      
+    <option value="bulk_dirty">Subida de peso</option>      
+    </select>      
+</div>  
+  
+<div style="display:flex; gap:10px; align-items:center;">  
+    <span style="width:80px; color:#a3a3a3;">Peso (kg):</span>  
+    <input type="number" id="weightInput" style="flex:1;" placeholder="Ej: 80">      
+</div>  
+  
+<div style="display:flex; gap:10px; align-items:center;">  
+    <span style="width:80px; color:#a3a3a3;">Excluir:</span>  
+    <input type="text" id="excludeInput" style="flex:1;" placeholder="Ej: Atún, Huevos (Alergias/Gustos)">      
+</div>  
+      
+<button onclick="generatePlan()" style="width:100%; margin-top:20px; font-size:1.1em; padding:15px; border:2px solid #16A34A; background:transparent;">Ejecutar Algoritmo IA FIT3M</button>      
+      
+<div id="planPreview"></div>      
+      
+<hr>      
+      
+<h3>Notas del Entrenador (Invisible para cliente)</h3>      
+<textarea rows="3" placeholder="Apuntes internos..."></textarea>      
+      
+<h3>Observaciones Especiales</h3>      
+<textarea rows="4" placeholder="Observaciones adicionales, lesiones, suplementación..."></textarea>      
+      
+</div>`;
+
+            document.getElementById("content").innerHTML = html;
+
+            let id = currentTrainerClient;
+
+            if (clients[id].exclude) {
+                document.getElementById("excludeInput").value = clients[id].exclude;
+            }
+
+            if (clients[id].plan) {
+                let preview = `<div style="margin-top:20px; background:#111; padding:20px; border-radius:8px; border:1px solid #16A34A;">  
+<h3 style="color:#16A34A; margin-top:0; border-bottom:1px solid #333; padding-bottom:10px;">Plan Nutricional Calculado</h3>  
+<div style="color:#FFCC00; font-family: monospace; font-size: 0.9em; margin-bottom: 20px;">  
+    > ${clients[id].macroInfo}  
+</div>`;
+                clients[id].plan.forEach(p => {
+                    preview += `  
+<div style="margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid #333;">  
+    <strong style="color:white; font-size:1.1em;">DÍA ${p.day}</strong><br>  
+    <div style="margin-top:8px;">  
+        <span style="color:#a3a3a3;">Desayuno:</span> ${p.desayuno}<br>  
+        <span style="color:#a3a3a3;">Almuerzo:</span> ${p.almuerzo}<br>  
+        <span style="color:#a3a3a3;">Cena:</span> ${p.cena}  
+    </div>  
+</div>`;
+                });
+                preview += "</div>";
+                document.getElementById("planPreview").innerHTML = preview;
+            }
+        }
+
+        function generatePlan() {
+            let id = document.getElementById("clientSelect").value;
+            let weight = parseFloat(document.getElementById("weightInput").value);
+            let exclude = document.getElementById("excludeInput").value.toLowerCase();
+            let goal = document.getElementById("clientGoal").value;
+
+            clients[id].exclude = exclude;
+
+            if (!weight) { alert("Introduce peso base para el algoritmo de la IA"); return; }
+
+            // 1. CÁLCULO CALÓRICO (Basado en TMB Simplificado * Factor de Actividad Medio)  
+            let tdee = weight * 24 * 1.4; // Calorías de Mantenimiento base  
+            let targetCalories = tdee;
+            let proteinPerKg = 2.0;
+            let fatPerKg = 0.9;
+
+            if (goal === "cut") {
+                targetCalories = tdee - 500; // Déficit clásico para bajar de peso  
+                proteinPerKg = 2.2; // Proteína más alta en déficit para preservar músculo  
+            } else if (goal === "shred") {
+                targetCalories = tdee - 700; // Déficit agresivo para pérdida de volumen rápida  
+                proteinPerKg = 2.3;
+            } else if (goal === "bulk_clean") {
+                targetCalories = tdee + 300; // Superávit moderado (masa magra)  
+                proteinPerKg = 1.8; // En superávit no hace falta tanta proteína por kg  
+            } else if (goal === "bulk_dirty") {
+                targetCalories = tdee + 600; // Superávit agresivo (subida de peso rápida)  
+                proteinPerKg = 1.8;
+            }
+
+            // 2. CÁLCULO DE MACRONUTRIENTES  
+            let proteinGrams = Math.round(weight * proteinPerKg);
+            let fatGrams = Math.round(weight * fatPerKg);
+            let proteinCals = proteinGrams * 4;
+            let fatCals = fatGrams * 9;
+            let carbCals = targetCalories - proteinCals - fatCals;
+            let carbGrams = Math.round(carbCals / 4);
+
+            // 3. GENERACIÓN DE MENÚ INTELIGENTE  
+            // Valores base crudos: Proteína(Pollo: 22g/100g), HC(Arroz: 78g/100g)  
+            let proteinMealTarget = proteinGrams / 3; // Dividir proteína magra principal entre almuerzo/cena/huevos  
+            let carbMealTarget = carbGrams / 3;
+
+            let riceGrams = Math.round((carbMealTarget * 100) / 78);
+            let oatsGrams = Math.round((carbMealTarget * 100) / 60); // Avena aprox 60g HC/100g  
+
+
+            let proteins = ["pollo", "pavo", "ternera magra", "salmon salvaje", "atun natural", "claras de huevo"];
+            proteins = proteins.filter(p => !exclude.includes(p));
+            if (proteins.length === 0) proteins = ["pollo limpio"];
+
+            function rand(a) { return a[Math.floor(Math.random() * a.length)]; }
+
+            let plan = [];
+            for (let d = 1; d <= 7; d++) {
+
+                let protein = rand(proteins);
+                let incluirHuevos = !exclude.includes("huevos");
+
+                let meatGramsAlmuerzo = Math.round((proteinMealTarget * 100) / 22); // Estimación media 22g Prot x 100g  
+                let meatGramsCena = Math.round((proteinMealTarget * 100) / 22);
+
+                let proteinComida = protein === "claras de huevo" ? "claras pasteurizadas 250ml" : `${protein} ${meatGramsAlmuerzo}g`;
+                let proteinCena = protein === "claras de huevo" ? "claras pasteurizadas 200ml" : `${protein} ${meatGramsCena}g`;
+
+                plan.push({
+                    day: d,
+                    desayuno: incluirHuevos
+                        ? `Avena integral ${oatsGrams}g + huevos enteros 3 (Revueltos)`
+                        : `Avena integral ${oatsGrams}g + Proteína Whey 1.5 scoops`,
+                    almuerzo: `${proteinComida} + Arroz basmati ${riceGrams}g + Brócoli vapor 100g`,
+                    cena: `${proteinCena} + Canónigos 70g + Tomate Cherry 80g + AOVE ${Math.round(fatGrams / 3)}g`,
+                    prep: "1. Pesa los alimentos en crudo. 2. Cuece el arroz al dente. 3. Cocina la proteína a la plancha. 4. Ensambla y aliña.",
+                    extra: "Queso Batido 0% 150g + Almendras 20g"
+                });
+            }
+
+            clients[id].plan = plan;
+            clients[id].macroInfo = `Cálculo biométrico IA para ${weight}kg: ~${Math.round(targetCalories)} Kcal/día (P: ${proteinGrams}g, CH: ${carbGrams}g, G: ${fatGrams}g)`;
+
+            renderTrainer();
+        }
+        function changeTrainerClient(value) {
+            currentTrainerClient = value;
+            renderTrainer();
+        }
+
+        /* ======================= */
+        /* ===== VISTA CLIENTE ===== */
+        /* ======================= */
+
+        let clientState = {
+            screen: "calendar",
+            day: null,
+            type: null,
+            id: null
+        };
+
+        function renderClient(id) {
+            clientState.id = id;
+            clientState.screen = "calendar";
+            drawClient();
+        }
+
+        function drawClient() {
+            let client = clients[clientState.id];
+            let container = document.getElementById("content");
+            container.innerHTML = `<div class="mobile" id="clientApp"></div>`;
+            let app = document.getElementById("clientApp");
+
+            // ===== CALENDARIO =====  
+            if (clientState.screen === "calendar") {
+                let html = `  
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">  
+            <h2 style="margin:0; border:none; padding:0;">Mi Programa</h2>  
+            <div style="width:40px; height:40px; background:#262626; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#16A34A; font-weight:bold;">F3M</div>  
+        </div>  
+        <div class="calendar">`;
+
+                for (let d = 1; d <= 30; d++) {
+                    if (client.plan && d <= 7) {
+                        html += `<div class="day active" onclick="openDay(${d})">${d}</div>`;
+                    } else {
+                        html += `<div class="day inactive">${d}</div>`;
+                    }
+                }
+
+                html += `</div>  
+        <div style="margin-top: 25px; padding: 15px; background: #FFCC00; color: black; border-radius: 8px; font-weight: bold; font-family: 'Arial Black', sans-serif; text-transform:uppercase; text-align:center;">  
+            ⚡ Reto Semanal: Supera tus macros hoy  
+        </div>  
+        `;
+                app.innerHTML = html;
+            }
+
+            // ===== TARJETAS MENÚ DÍA =====  
+            if (clientState.screen === "day") {
+                app.innerHTML = `  
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">  
+                <h2 style="margin:0; border:none; padding:0; color:#16A34A;">DÍA ${clientState.day}</h2>  
+                <button onclick="goBack()" style="margin:0; background:#333; padding: 6px 12px;">Volver</button>  
+            </div>  
+  
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;">  
+                <div class="card-box" onclick="openSection('desayuno')">🍳<br><span style="font-size:0.8em; margin-top:5px; display:block;">DESAYUNO</span></div>  
+                <div class="card-box" onclick="openSection('almuerzo')">🍽<br><span style="font-size:0.8em; margin-top:5px; display:block;">ALMUERZO</span></div>  
+                <div class="card-box" onclick="openSection('cena')">🥗<br><span style="font-size:0.8em; margin-top:5px; display:block;">CENA</span></div>  
+                <div class="card-box" onclick="openSection('extra')">⚡<br><span style="font-size:0.8em; margin-top:5px; display:block;">SNACK</span></div>  
+            </div>  
+  
+            <div style="margin-top:20px;">  
+                <button onclick="openSection('prep')" style="width:100%; padding:15px; background:transparent; border:1px solid #16A34A; color:#16A34A;">👨‍🍳 VER PREPARACIÓN</button>  
+                <button onclick="openSection('shopping')" style="width:100%; padding:15px; background:#262626; color:white; margin-top:10px;">🛒 LISTA DE COMPRA</button>  
+            </div>  
+        `;
+            }
+
+            // ===== CONTENIDO INTERIOR =====  
+            if (clientState.screen === "section") {
+
+                let day = client.plan.find(p => p.day === clientState.day);
+
+                let headerContenido = `  
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">  
+            <h2 style="margin:0; border:none; padding:0; color:white; font-size:1.2em;">${clientState.type.replace('_', ' ').toUpperCase()}</h2>  
+            <button onclick="goBack()" style="margin:0; background:#333; padding: 6px 12px;">Cerrar</button>  
+        </div>  
+    `;
+
+                // ===== LISTA COMPRA MENU =====  
+                if (clientState.type === "shopping") {
+                    app.innerHTML = headerContenido + `  
+            <div style="margin-top:20px;">  
+                <div class="card-box" onclick="openSection('shopping_day')" style="margin-bottom:15px; background:#111; text-align:left; padding:20px; border-left: 4px solid #16A34A;">  
+                    <strong style="color:white; font-size:1.1em;">🛒 Compra Diaria</strong><br>  
+                    <span style="color:#a3a3a3; font-weight:normal; font-size:0.9em;">Solo lo de hoy (Día ${clientState.day})</span>  
+                </div>  
+                  
+                <div class="card-box" onclick="openSection('shopping_month')" style="background:#111; text-align:left; padding:20px; border-left: 4px solid #FFCC00;">  
+                    <strong style="color:white; font-size:1.1em;">🛒 Batch Cooking (Semanal)</strong><br>  
+                    <span style="color:#a3a3a3; font-weight:normal; font-size:0.9em;">Ahorra tiempo comprando todo</span>  
+                </div>  
+            </div>  
+        `;
+                    return;
+                }
+
+                // ===== LISTA COMPRA DÍA =====  
+                if (clientState.type === "shopping_day") {
+
+                    let items = [day.desayuno, day.almuerzo, day.cena, day.extra];
+                    let ingredients = {};
+
+                    items.forEach(text => {
+                        let parts = text.split("+");
+                        parts.forEach(p => {
+                            let match = p.trim().match(/(.+?)\s(\d+)(g| scoop)?/i);
+                            if (match) {
+                                let name = match[1].trim();
+                                let qty = parseInt(match[2]);
+                                let unit = match[3] ? match[3].trim() : "ud";
+
+                                if (!ingredients[name]) {
+                                    ingredients[name] = { q: 0, u: unit };
+                                }
+                                ingredients[name].q += qty;
+                            }
+                        });
+                    });
+
+                    let htmlList = "<ul id='listaTexto' style='list-style-type:none; padding:0; background:transparent; border:none;'>";
+                    for (let key in ingredients) {
+                        htmlList += `<li style="background:#262626; padding:15px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">  
+            <span style="color:white;text-transform:capitalize;">${key}</span>   
+            <span style="color:#16A34A;">${ingredients[key].q} ${ingredients[key].u}</span>  
+        </li>`;
+                    }
+                    htmlList += "</ul>";
+
+                    app.innerHTML = headerContenido + `  
+    ${htmlList}  
+    <button style="width:100%; padding:15px; margin-top:20px;" onclick="compartirLista('Lista día ${clientState.day} (FIT3M)', document.getElementById('listaTexto').innerText)">  
+        📲 Enviar a WhatsApp / Notas  
+    </button>  
+`;
+                    return;
+                }
+
+                // ===== LISTA COMPRA MES =====  
+                if (clientState.type === "shopping_month") {
+                    let ingredients = {};
+                    client.plan.forEach(d => {
+                        let items = [d.desayuno, d.almuerzo, d.cena, d.extra];
+                        items.forEach(text => {
+                            let parts = text.split("+");
+                            parts.forEach(p => {
+                                let match = p.trim().match(/(.+?)\s(\d+)(g| scoop)?/i);
+                                if (match) {
+                                    let name = match[1].trim();
+                                    let qty = parseInt(match[2]);
+                                    let unit = match[3] ? match[3].trim() : "ud";
+
+                                    if (!ingredients[name]) {
+                                        ingredients[name] = { q: 0, u: unit };
+                                    }
+                                    ingredients[name].q += qty;
+                                }
+                            });
+                        });
+                    });
+
+                    let htmlList = "<ul id='listaTexto' style='list-style-type:none; padding:0; background:transparent; border:none;'>";
+                    for (let key in ingredients) {
+                        htmlList += `<li style="background:#262626; padding:15px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">  
+            <span style="color:white;text-transform:capitalize;">${key}</span>   
+            <span style="color:#FFCC00;">${ingredients[key].q} ${ingredients[key].u}</span>  
+        </li>`;
+                    }
+                    htmlList += "</ul>";
+
+                    app.innerHTML = headerContenido + `  
+    ${htmlList}  
+    <button style="width:100%; padding:15px; margin-top:20px; background:#FFCC00; color:black;" onclick="compartirLista('Macro Lista Semanal', document.getElementById('listaTexto').innerText)">  
+        📲 Exportar Macro-Lista  
+    </button>  
+`;
+                    return;
+                }
+
+                // ===== PREPARACIÓN PASO A PASO =====  
+                if (clientState.type === "prep") {
+
+                    let steps = day.prep.split(".").filter(s => s.trim() !== "");
+
+                    let stepHTML = "";
+                    let numberColor = "#16A34A";
+
+                    steps.forEach((step, index) => {
+                        // Limpiar posibles números pegados al inicio del string en los pasos  
+                        let cleanStep = step.replace(/^\d+\.\s*/, '').trim();
+                        if (cleanStep) {
+                            stepHTML += `  
+                    <div class="step-box">  
+                        <strong style="color:${numberColor}; font-size:1.1em;">PASO ${index + 1}</strong><br>  
+                        <p style="margin:8px 0 0 0; color:#e5e7eb; line-height:1.5;">${cleanStep}.</p>  
+                    </div>  
+                `;
+                        }
+                    });
+
+                    app.innerHTML = headerContenido + `  
+            ${stepHTML}  
+            <div style="background:#111; padding:15px; border-radius:8px; text-align:center; color:#666; font-size:0.9em; margin-top:20px; border:1px solid #333;">  
+                Asegúrate de pesar los alimentos en crudo.  
+            </div>  
+        `;
+                    return;
+                }
+
+                // ===== CONTENIDO DE COMIDA GENERAL (Desayuno, Almuerzo, Cena, Extra) =====  
+                let content = day[clientState.type];
+
+                // Separamos los ingredientes por el " + " para ponerlos en lista bonita  
+                let elements = content.split('+');
+                let listaBonita = elements.map(el => {
+                    return `<div style="background:#262626; padding:15px; border-radius:8px; margin-bottom:10px; border-left: 2px solid #16A34A; color:white;">  
+            ${el.trim()}  
+        </div>`;
+                }).join("");
+
+                app.innerHTML = headerContenido + `  
+        <div style="margin-top:10px;">  
+           ${listaBonita}  
+        </div>  
+        <button style="width:100%; border:2px solid #333; background:transparent; padding:15px; margin-top:15px; color:#a3a3a3;" onclick="goBack()">Ver todo el día</button>  
+    `;
+            }
+        }
+
+        function openDay(d) {
+            clientState.day = d;
+            clientState.screen = "day";
+            drawClient();
+        }
+
+        function openSection(type) {
+            clientState.type = type;
+            clientState.screen = "section";
+            drawClient();
+        }
+
+        function goBack() {
+            if (clientState.screen === "section") {
+                clientState.screen = "day";
+            } else {
+                clientState.screen = "calendar";
+            }
+            drawClient();
+        }
+
+        function compartirLista(titulo, contenido) {
+            // Limpiamos la lista para enviar por texto nativo  
+            let listItemsTxt = document.querySelectorAll('#listaTexto li');
+            let textLimpio = titulo + "\n----------------\n";
+            if (listItemsTxt.length > 0) {
+                listItemsTxt.forEach(li => {
+                    textLimpio += "• " + li.innerText.replace('\n', ' - ') + "\n";
+                });
+            } else {
+                textLimpio += contenido; // Fallback  
+            }
+
+            if (navigator.share) {
+                navigator.share({
+                    title: titulo,
+                    text: textLimpio
+                });
+            } else {
+                // Fallback copiado  
+                navigator.clipboard.writeText(textLimpio).then(() => {
+                    alert("Lista copiada al portapapeles. Pégala donde quieras.");
+                }).catch(err => {
+                    alert("No se pudo copiar: " + err);
+                });
+            }
+        }
+
+        /* --- FUNCIONES DE CÁLCULO FIT3M --- */
+        function calculateMacrosPRO() {
+            let wt = parseFloat(document.getElementById("maWt").value);
+            if (document.getElementById("maUnit").value === "lb") wt *= 0.45;
+            let ht = parseFloat(document.getElementById("maHt").value);
+            let goal = document.getElementById("maGoal").value;
+            let tmb = (10 * wt) + (6.25 * ht) - (5 * 30) + 5;
+            let tdee = tmb * 1.5;
+            if (goal === "lose") tdee -= 500; else if (goal === "gain") tdee += 300;
+            document.getElementById("resKcal").innerText = Math.round(tdee);
+            document.getElementById("resP").innerText = Math.round((tdee * 0.3) / 4);
+            document.getElementById("resC").innerText = Math.round((tdee * 0.45) / 4);
+            document.getElementById("resF").innerText = Math.round((tdee * 0.25) / 9);
+            document.getElementById("maResult").style.display = "block";
+        }
+
+        function calculateClinica() {
+            let wt = parseFloat(document.getElementById("clWt").value);
+            let stress = parseFloat(document.getElementById("clStress").value);
+            if (!wt) return;
+            let get = (wt * 22) * stress;
+            document.getElementById("clVal").innerText = Math.round(get);
+            document.getElementById("clRes").style.display = "block";
+        }
+
+    </script>
+</body>
+
+</html>
