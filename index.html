@@ -917,7 +917,19 @@ ${list}
             }
 
             clients[id].plan = plan;
-            clients[id].macroInfo = `Cálculo biométrico IA para ${weight}kg: ~${Math.round(targetCalories)} Kcal/día (P: ${proteinGrams}g, CH: ${carbGrams}g, G: ${fatGrams}g)`;
+            clients[id].macroInfo = `<strong style="color:white;">Vista creada con IA</strong><br><br>
+<span style="color:#e5e7eb; font-family:sans-serif; line-height:1.4;">La ecuación de Mifflin-St Jeor (1990) es la fórmula más precisa y utilizada actualmente para estimar la Tasa Metabólica Basal (TMB) en adultos sanos, independientemente de si tienen sobrepeso u obesidad. Calcula las calorías necesarias en reposo basándose en el género, peso (kg), altura (cm) y edad (años).</span><br><br>
+<strong style="color:white;">Fórmulas de Mifflin-St Jeor:</strong><br>
+<span style="color:#e5e7eb; font-family:sans-serif;">Hombres: (10 x peso en kg) + (6.25 x altura en cm) - (5 x edad en años) + 5<br>
+Mujeres: (10 x peso en kg) + (6.25 x altura en cm) - (5 x edad en años) - 161</span><br><br>
+<strong style="color:white;">Puntos Clave:</strong><br>
+<table style="color:#e5e7eb; font-family:sans-serif; line-height:1.4; font-size:0.95em; border-spacing:0 8px;">
+<tr><td style="vertical-align:top; padding-right:8px; color:#FFCC00;">•</td><td><strong>TMB (o TMR):</strong> Representa las calorías mínimas que el cuerpo necesita para funcionar en reposo.</td></tr>
+<tr><td style="vertical-align:top; padding-right:8px; color:#FFCC00;">•</td><td><strong>Precisión:</strong> Supera a la fórmula de Harris-Benedict en la población general y en personas con sobrepeso/obesidad.</td></tr>
+<tr><td style="vertical-align:top; padding-right:8px; color:#FFCC00;">•</td><td><strong>Uso:</strong> Se multiplica la TMB por un factor de actividad física (1.2 a 1.9) para determinar las calorías de mantenimiento totales (GET).</td></tr>
+</table>
+<hr style="border-color:#333; margin: 15px 0;">
+<span style="font-size:1.1em; color:#16A34A;">Cálculo biométrico IA para ${weight}kg: ~${Math.round(targetCalories)} Kcal/día (P: ${proteinGrams}g, CH: ${carbGrams}g, G: ${fatGrams}g)</span>`;
 
             renderTrainer();
         }
