@@ -549,8 +549,13 @@
 
     <script>
 
-        const PRIVATE_EMAIL = "barbaragracrei@gmail.com";
-        const PRIVATE_PASS = "VANE-2026";
+        async function hashString(str) {
+            const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        const VALID_EMAIL_HASH = "b9989984bb0b60dd27ec2a721ba50f6f3cc7640797ad4ede08aac4d679a41cf7";
+        const VALID_PASS_HASH = "24159c81a917d37458d93f221aff611788e03a8e91b72d2e4c22ff947ffe3f58";
 
         const users = {
             "admin@fit3m.example": { pass: "ADMIN-2026", role: "admin" },
@@ -570,10 +575,14 @@
         };
         let currentTrainerClient = "client1";
 
-        function privateAccess() {
+        async function privateAccess() {
             let email = document.getElementById("privateEmail").value;
             let pass = document.getElementById("privatePass").value;
-            if (email === PRIVATE_EMAIL && pass === PRIVATE_PASS) {
+
+            const emailHash = await hashString(email);
+            const passHash = await hashString(pass);
+
+            if (emailHash === VALID_EMAIL_HASH && passHash === VALID_PASS_HASH) {
                 document.getElementById("privateLogin").classList.remove("active");
                 document.getElementById("roleLogin").classList.add("active");
             } else {
@@ -747,8 +756,37 @@ ${list}
     <span style="width:80px; color:#a3a3a3;">Peso (kg):</span>  
     <input type="number" id="weightInput" style="flex:1;" placeholder="Ej: 80">      
 </div>  
+
+<div style="display:flex; gap:10px; align-items:center; margin-top: 10px;">  
+    <span style="width:80px; color:#a3a3a3;">Altura (cm):</span>  
+    <input type="number" id="heightInput" style="flex:1;" placeholder="Ej: 175">      
+</div>  
+
+<div style="display:flex; gap:10px; align-items:center; margin-top: 10px;">  
+    <span style="width:80px; color:#a3a3a3;">Edad:</span>  
+    <input type="number" id="ageInput" style="flex:1;" placeholder="Ej: 30">      
+</div> 
+
+<div style="display:flex; gap:10px; align-items:center; margin-top: 10px;">  
+    <span style="width:80px; color:#a3a3a3;">Sexo:</span>  
+    <select id="genderInput" style="flex:1;">  
+        <option value="male">Hombre</option>  
+        <option value="female">Mujer</option>  
+    </select>      
+</div>
+
+<div style="display:flex; gap:10px; align-items:center; margin-top: 10px;">  
+    <span style="width:80px; color:#a3a3a3;">Nivel Ejercicio:</span>  
+    <select id="activityInput" style="flex:1;">  
+        <option value="1.2">Sedentario (Poco o ningún ejercicio)</option>  
+        <option value="1.375">Ligero (1-3 días a la semana)</option>  
+        <option value="1.55" selected>Moderado (3-5 días a la semana)</option>  
+        <option value="1.725">Activo (6-7 días a la semana)</option>  
+        <option value="1.9">Muy Activo (Ejercicio muy intenso/Trabajo físico)</option>  
+    </select>      
+</div>  
   
-<div style="display:flex; gap:10px; align-items:center;">  
+<div style="display:flex; gap:10px; align-items:center; margin-top: 10px;">  
     <span style="width:80px; color:#a3a3a3;">Excluir:</span>  
     <input type="text" id="excludeInput" style="flex:1;" placeholder="Ej: Atún, Huevos (Alergias/Gustos)">      
 </div>  
@@ -800,40 +838,44 @@ ${list}
         function generatePlan() {
             let id = document.getElementById("clientSelect").value;
             let weight = parseFloat(document.getElementById("weightInput").value);
+            let height = parseFloat(document.getElementById("heightInput").value);
+            let age = parseFloat(document.getElementById("ageInput").value);
+            let gender = document.getElementById("genderInput").value;
+            let activityFactor = parseFloat(document.getElementById("activityInput").value);
             let exclude = document.getElementById("excludeInput").value.toLowerCase();
             let goal = document.getElementById("clientGoal").value;
 
             clients[id].exclude = exclude;
 
-            if (!weight) { alert("Introduce peso base para el algoritmo de la IA"); return; }
+            if (!weight || !height || !age) { alert("Introduce peso, altura y edad base para el algoritmo de la IA"); return; }
+            if (!activityFactor) activityFactor = 1.55;
 
-            // 1. CÁLCULO CALÓRICO (Basado en TMB Simplificado * Factor de Actividad Medio)  
-            let tdee = weight * 24 * 1.4; // Calorías de Mantenimiento base  
+            // 1. CÁLCULO CALÓRICO (Ecuación Mifflin-St Jeor)  
+            let tmb = (10 * weight) + (6.25 * height) - (5 * age);
+            if (gender === "male") {
+                tmb += 5;
+            } else {
+                tmb -= 161;
+            }
+            let tdee = tmb * activityFactor; // Gasto energético total con factor de actividad  
             let targetCalories = tdee;
-            let proteinPerKg = 2.0;
-            let fatPerKg = 0.9;
 
-            if (goal === "cut") {
-                targetCalories = tdee - 500; // Déficit clásico para bajar de peso  
-                proteinPerKg = 2.2; // Proteína más alta en déficit para preservar músculo  
-            } else if (goal === "shred") {
-                targetCalories = tdee - 700; // Déficit agresivo para pérdida de volumen rápida  
-                proteinPerKg = 2.3;
-            } else if (goal === "bulk_clean") {
-                targetCalories = tdee + 300; // Superávit moderado (masa magra)  
-                proteinPerKg = 1.8; // En superávit no hace falta tanta proteína por kg  
-            } else if (goal === "bulk_dirty") {
-                targetCalories = tdee + 600; // Superávit agresivo (subida de peso rápida)  
-                proteinPerKg = 1.8;
+            // Ajuste estricto basado en la misma lógica del Macro PRO (±500 o ±300)
+            if (goal === "cut" || goal === "shred") {
+                targetCalories = tdee - 500;
+            } else if (goal === "bulk_clean" || goal === "bulk_dirty") {
+                targetCalories = tdee + 300;
             }
 
-            // 2. CÁLCULO DE MACRONUTRIENTES  
-            let proteinGrams = Math.round(weight * proteinPerKg);
-            let fatGrams = Math.round(weight * fatPerKg);
-            let proteinCals = proteinGrams * 4;
-            let fatCals = fatGrams * 9;
-            let carbCals = targetCalories - proteinCals - fatCals;
+            // 2. CÁLCULO DE MACRONUTRIENTES (Alineado estrictamente con Macros PRO FIT3M)
+            // Macros PRO reparte así: 30% Prot / 45% Carbs / 25% Fat basado en las calorías meta.
+            let proteinCals = targetCalories * 0.30;
+            let carbCals = targetCalories * 0.45;
+            let fatCals = targetCalories * 0.25;
+
+            let proteinGrams = Math.round(proteinCals / 4);
             let carbGrams = Math.round(carbCals / 4);
+            let fatGrams = Math.round(fatCals / 9);
 
             // 3. GENERACIÓN DE MENÚ INTELIGENTE  
             // Valores base crudos: Proteína(Pollo: 22g/100g), HC(Arroz: 78g/100g)  
